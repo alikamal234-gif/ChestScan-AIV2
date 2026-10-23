@@ -18,29 +18,19 @@ def build_transfer_model(input_shape=(224, 224, 3)):
     base_model.trainable = False
 
     # 3. Data Augmentation
-    data_augmentation = tf.keras.Sequential([
+    # 4. Construire l'architecture avec Sequential
+    model = tf.keras.Sequential([
+        tf.keras.layers.Input(shape=input_shape),
         tf.keras.layers.RandomRotation(0.03),
         tf.keras.layers.RandomZoom(0.1),
         tf.keras.layers.RandomTranslation(
             height_factor=0.05,
             width_factor=0.05
-        )
-    ], name="data_augmentation")
-
-    # 4. Construire l'architecture avec Sequential
-    model = tf.keras.Sequential([
-        tf.keras.layers.Input(shape=input_shape),
-
-        data_augmentation,
-
+        ),
         tf.keras.layers.Lambda(preprocess_input),
-
         base_model,
-
         tf.keras.layers.GlobalAveragePooling2D(),
-
         tf.keras.layers.Dropout(0.3),
-
         tf.keras.layers.Dense(1, activation="sigmoid")
     ])
 
